@@ -12,9 +12,10 @@ var maxWaitTimer;
 // 资源计数
 var resourceCount = 0;
 
-// 请求计数，只是为了记录第一次请求的 header，即我们目的页面的 header
+// 请求计数，单纯为了记录 header
 var requestCount = 0;
 var requestHeaderContentType = '';
+var requestHeaderStatus = 200;
 
 // PhantomJS WebPage模块
 var page = require('webpage').create();
@@ -52,8 +53,7 @@ var capture = function (errCode) {
         content = page.content;
     }
 
-    // 把页面返回的 content-type 附加到正文第一行（类似 http/1.x 协议）
-    content = requestHeaderContentType + "\n" + content;
+    content =  requestHeaderStatus + "\n" + requestHeaderContentType + "\n" + content;
     console.log(content);
 
     // 清除计时器
@@ -90,15 +90,8 @@ page.onResourceReceived = function (res) {
     requestCount++;
 
     if (requestCount === 1) {
-
-        if (res.headers.filter(function (header) {
-                if (header.name == 'Content-Type') {
-                    requestHeaderContentType += header.value;
-                    return true
-                }
-                return false
-            }).length > 0) {
-        }
+        requestHeaderContentType = res.contentType;
+        requestHeaderStatus = res.status;
     }
 
 };

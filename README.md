@@ -1,5 +1,5 @@
 # server-render-javascript
-Let search engine craw your javascript website happily and correctly.
+Let search engine craw your javascript website happily and correctly.🤡
 
 ## Dependency
 
@@ -15,7 +15,7 @@ Suggested
 
 ## Install
 
-I suppose you are using a Ubuntu Server and nginx as web server.
+> Suppose you are using a Ubuntu Server and nginx as web server.
 
 1. NodeJS
 
@@ -28,8 +28,7 @@ ln -s /usr/bin/nodejs /usr/bin/node
 
 2. PhantomJS
 
-Go [http://phantomjs.org/download.html](http://phantomjs.org/download.html) and download a latest version, extract
-it, cd the dir, and `mv bin/phantomjs /usr/bin`, that is all!
+Go [http://phantomjs.org/download.html](http://phantomjs.org/download.html) and download a latest version, extract it, cd the dir, and `mv bin/phantomjs /usr/bin`, that is all!
 
 3. Install and Run
 
@@ -53,6 +52,9 @@ npm install
 pm2 start spider.js
 ```
 
+after started, you can use `pm2 logs` to monitor logs, `pm2 list` to display services and much more.
+
+
 4. Proxy Request
 
 I suppose you use nginx as web server and run the nodejs and nginx at same server.
@@ -75,10 +77,10 @@ server {
     location / {
         ...        
     
-        proxy_set_header  X-Scheme        $scheme;
-        proxy_set_header  Host            $host:$proxy_port;
-        proxy_set_header  X-Real-IP       $remote_addr;
-        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
 
         if ($is_spider = 1) {
              proxy_pass http://localhost:9001;
@@ -97,18 +99,13 @@ You can make a request and check your nginx access log if anything works great.
 `curl -A 'fake Googlebot by server-render-javascript' http://yourwebsite.com/abc`
 
 You should get two line in nginx access log, one is your request with user-agent `fake Googlebot by server-render-javascript` and one made by
-your upstream server with user-agent `ServerRenderJavascript`, if you not change the default user-agent at craw.js.
-
-If you get three line per request, check if your website redirect the http request to https.
-If, change the `var url =` line at spider.js, hardcode the protocol to `https`.
+your upstream server with user-agent `ServerRenderJavascript`, if you have not change the default user-agent at craw.js.
 
 
-## warning
+## Caution
 
-* If your website is https only, go spider.js, make sure the url is set by `var url = 'https' + '://'+ req.hostname + req.originalUrl;`
-* Listen 9001 by default, if you change the port, change nginx proxy port too.
+* Listen 9001 by default, if you change the port in spider.js, change nginx proxy port too.
 * Watch out the timeout in craw.js
-
 
 
 ## What and how it works

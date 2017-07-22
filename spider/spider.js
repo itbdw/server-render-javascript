@@ -2,16 +2,15 @@
 var express = require('express');
 var app = express();
 
+app.enable('trust proxy');
+
 // 引入NodeJS的子进程模块
 var child_process = require('child_process');
 
 app.get('/*', function(req, res){
 
     // 完整URL
-    // var url = req.protocol + '://'+ req.hostname + req.originalUrl;
-
-    // todo 硬编码，因为协议是固定的 nginx 写死的 http。如果网站是 https 的则直接改成 https
-    var url = 'http' + '://'+ req.hostname + req.originalUrl;
+    var url = req.protocol + '://'+ req.hostname + req.originalUrl;
 
     // 预渲染后的页面字符串容器
     var content = '';
@@ -33,20 +32,27 @@ app.get('/*', function(req, res){
         switch (code){
             case 1:
                 console.log('加载失败: '+url);
-                res.setHeader(502);
+                res.statusCode = 502;
                 res.send('加载失败');
                 break;
             case 2:
                 console.log('加载超时: '+ url);
-                res.writeHead(504);
+                res.statusCode = 504;
                 res.send(content);
                 break;
             default:
+                var content_split = content.split("\n");
 
-                var content_type = content.split("\n")[0];
-                res.header("Content-Type", content_type);
+                var status = content_split[0];
+                var contentType = content_split[1];
 
-                content = content.replace(content_type + "\n", "");
+                res.statusCode = status;
+                res.header("Content-Type", contentType);
+
+                content_split.shift();
+                content_split.shift();
+
+                content = content_split.join("\n");
 
                 res.send(content);
                 break;
