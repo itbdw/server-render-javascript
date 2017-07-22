@@ -96,8 +96,8 @@ You can make a request and check your nginx access log if anything works great.
 
 `curl -A 'fake Googlebot by server-render-javascript' http://yourwebsite.com/abc`
 
-You should get too line log, one is your request with user-agent `fake Googlebot by server-render-javascript` and one made by
-your upstream server with user-agent `ServerRenderJavascript` if not change the default user-agent at craw.js.
+You should get two line in nginx access log, one is your request with user-agent `fake Googlebot by server-render-javascript` and one made by
+your upstream server with user-agent `ServerRenderJavascript`, if you not change the default user-agent at craw.js.
 
 If you get three line per request, check if your website redirect the http request to https.
 If, change the `var url =` line at spider.js, hardcode the protocol to `https`.
@@ -116,16 +116,15 @@ If, change the `var url =` line at spider.js, hardcode the protocol to `https`.
 Your website is rendered with javascript. But search engine (like Baidu, Sogou, 360) does not like the page, and `even` can not understand javascript content totally.
 
 
-So, why don't we run a browser on the server side. When spider like Googlebot come to your website,
-you proxy the request to a upstream server, `nodejs server`, and the upstream server deal the request
-with a headless browser and make a new request just like the spider and return the
+So, why don't we run a browser on the server side. When spider like Googlebot comes to your website,
+proxy the request to a upstream server, why not `nodejs server`, and the upstream server deal the request
+with a headless browser and make a new request just like the we human visit website by Safari or Chrome and return the
 rendered content back.
 
 The workflow looks like this
 
 ```
-GoogleBot => Web Server => NodeJs Server => 
-    Make A Request Again With Server Browser => Get Web Content And Return
+GoogleBot => Web Server => NodeJS Server => Make A Request Again With Server Browser => Get Web Content And Return
 ```
 
 In fact, Chrome also support headless browse after version 59. But compared with PhantomJS for now, PhantomJS is better and easy to use.

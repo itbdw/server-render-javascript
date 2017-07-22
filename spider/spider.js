@@ -8,10 +8,10 @@ var child_process = require('child_process');
 app.get('/*', function(req, res){
 
     // 完整URL
-    var url = req.protocol + '://'+ req.hostname + req.originalUrl;
+    // var url = req.protocol + '://'+ req.hostname + req.originalUrl;
 
-    // todo 硬编码，如果是 https 的需要设置这个，否则使用上面的即可
-    // var url = 'https' + '://'+ req.hostname + req.originalUrl;
+    // todo 硬编码，因为协议是固定的 nginx 写死的 http。如果网站是 https 的则直接改成 https
+    var url = 'http' + '://'+ req.hostname + req.originalUrl;
 
     // 预渲染后的页面字符串容器
     var content = '';
