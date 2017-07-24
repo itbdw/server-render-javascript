@@ -41,6 +41,14 @@ ua = ua.replace(/pider/g, '-p-i-d-e-r');
 page.settings.userAgent = ua + ' ' + 'ServerRenderJavascript';
 page.settings.resourceTimeout = 5000;
 
+page.customHeaders = {
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+};
+
+page.onInitialized = function() {
+  page.customHeaders = {};
+};
+
 // 获取镜像
 var capture = function (errCode) {
 
