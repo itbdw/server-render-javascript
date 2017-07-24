@@ -34,9 +34,8 @@ page.viewportSize = {
     height: 1014
 };
 
-
-ua = ua.replace('bot', '-b-o-t');
-ua = ua.replace('pider', '-p-i-d-e-r');
+ua = ua.replace(/bot/g, '-b-o-t');
+ua = ua.replace(/pider/g, '-p-i-d-e-r');
 
 //timeout
 page.settings.userAgent = ua + ' ' + 'ServerRenderJavascript';
