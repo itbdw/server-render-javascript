@@ -91,7 +91,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
 
         if ($is_spider = 1) {
-             proxy_pass http://localhost:9001;
+             proxy_pass http://spider;
         }
 
         ...
