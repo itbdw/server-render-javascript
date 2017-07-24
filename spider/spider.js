@@ -1,6 +1,7 @@
 // ExpressJS调用方式
 var express = require('express');
 var app = express();
+var base64 = require('base-64');
 
 app.enable('trust proxy');
 
@@ -11,12 +12,13 @@ app.get('/*', function(req, res){
 
     // 完整URL
     var url = req.protocol + '://'+ req.hostname + req.originalUrl;
+    var ua = base64.encode(req.headers['user-agent']);
 
     // 预渲染后的页面字符串容器
     var content = '';
 
     // 开启一个phantomjs子进程
-    var phantom = child_process.spawn('phantomjs', ['--load-images=false', '--disk-cache=true', '--disk-cache-path=/tmp/phantomjs/cache', '--ignore-ssl-errors=true', '--local-storage-path=/tmp/phantomjs/local', 'craw.js', url]);
+    var phantom = child_process.spawn('phantomjs', ['--load-images=false', '--disk-cache=true', '--disk-cache-path=/tmp/phantomjs/cache', '--ignore-ssl-errors=true', '--local-storage-path=/tmp/phantomjs/local', 'craw.js', url, ua]);
 
     // 设置stdout字符编码
     phantom.stdout.setEncoding('utf8');
@@ -25,7 +27,6 @@ app.get('/*', function(req, res){
     phantom.stdout.on('data', function(data){
         content += data.toString();
     });
-
 
     // 监听子进程退出事件
     phantom.on('exit', function(code){
@@ -41,6 +42,7 @@ app.get('/*', function(req, res){
                 res.send(content);
                 break;
             default:
+
                 var content_split = content.split("\n");
 
                 var status = content_split[0];
@@ -61,5 +63,10 @@ app.get('/*', function(req, res){
 
 });
 
-app.listen(9001);
+app.listen(9500);
+app.listen(9501);
+app.listen(9502);
+app.listen(9503);
+app.listen(9504);
+
 

@@ -7,7 +7,7 @@ Let search engine craw your javascript website happily and correctly.🤡
 
 `PhantomJS`, a server headless browser.
 
-`NodeJS`, run a javascript server to deal with content get from the browser.
+`NodeJS`, serve phantomjs.
 
 Suggested
 
@@ -32,8 +32,8 @@ Go [http://phantomjs.org/download.html](http://phantomjs.org/download.html) and 
 
 3. Install and Run
 
-Download this code the your server like `/var/server/spider`, the dir
-looks like below
+Download this code to your server, say `/var/server/spider`, the directory
+structure looks like below
 
 ```
 /var/server/spider/
@@ -60,6 +60,14 @@ after started, you can use `pm2 logs` to monitor logs, `pm2 list` to display ser
 I suppose you use nginx as web server and run the nodejs and nginx at same server.
 
 ```
+upstream spider {
+    server localhost:9500;
+    server localhost:9501;
+    server localhost:9502;
+    server localhost:9503;
+    server localhost:9504;
+}
+
 server {
     ...
     
@@ -104,9 +112,7 @@ your upstream server with user-agent `ServerRenderJavascript`, if you have not c
 
 ## Caution
 
-* Listen 9001 by default, if you change the port in spider.js, change nginx proxy port too.
 * Watch out the timeout in craw.js
-
 
 ## What and how it works
 

@@ -19,12 +19,14 @@ var requestHeaderStatus = 200;
 
 // PhantomJS WebPage模块
 var page = require('webpage').create();
+var base64 = require('base-64');
 
 // NodeJS 系统模块
 var system = require('system');
 
 // 从CLI中获取第二个参数为目标URL
 var url = system.args[1];
+var ua = base64.decode(system.args[2]);
 
 // 设置PhantomJS视窗大小
 page.viewportSize = {
@@ -32,8 +34,12 @@ page.viewportSize = {
     height: 1014
 };
 
+
+ua = ua.replace('bot', '-b-o-t');
+ua = ua.replace('pider', '-p-i-d-e-r');
+
 //timeout
-page.settings.userAgent = 'ServerRenderJavascript';
+page.settings.userAgent = ua + ' ' + 'ServerRenderJavascript';
 page.settings.resourceTimeout = 5000;
 
 // 获取镜像
