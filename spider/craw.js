@@ -1,6 +1,14 @@
 /*global phantom*/
 "use strict";
 
+// bug see https://github.com/ariya/phantomjs/issues/10150
+console.warn = function () {
+    require("system").stderr.write(Array.prototype.join.call(arguments, ' ') + '\n');
+};
+console.error = function () {
+    require("system").stderr.write(Array.prototype.join.call(arguments, ' ') + '\n');
+};
+
 // 单个资源等待时间，避免资源加载后还需要加载其他资源
 var resourceWait = 1000;
 var resourceWaitTimer;
@@ -43,10 +51,6 @@ page.settings.resourceTimeout = 5000;
 
 page.customHeaders = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-};
-
-page.onInitialized = function() {
-    page.customHeaders = {};
 };
 
 // 获取镜像
@@ -109,7 +113,18 @@ page.onResourceReceived = function (res) {
 };
 
 // catch error，防止失败错误直接暴露到页面
-page.onError = function (res) {
+page.onError = function(msg, trace) {
+
+  var msgStack = ['ERROR: ' + msg];
+
+  if (trace && trace.length) {
+    msgStack.push('TRACE:');
+    trace.forEach(function(t) {
+      msgStack.push(' -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function +'")' : ''));
+    });
+  }
+
+  console.error(msgStack.join('\n'));
 
 };
 

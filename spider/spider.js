@@ -29,11 +29,7 @@ app.get('/*', function(req, res){
     });
 
     phantom.stderr.on('data', function(data){
-        console.error('stderr:' + url + data.toString());
-    });
-
-    phantom.stdout.on('error', function () {
-        console.error('stdout_error:' + url);
+        console.error('stderr:' + url + "\n" + data.toString());
     });
 
     phantom.on('uncaughtException', function(err) {
