@@ -64,12 +64,20 @@ app.get('/*', function(req, res){
 
                 var status = content_split[0];
                 var contentType = content_split[1];
+                var redirectUrl = content_split[2];
 
                 res.statusCode = status;
                 res.header("Content-Type", contentType);
 
                 content_split.shift();
                 content_split.shift();
+                content_split.shift();
+
+                if (redirectUrl) {
+                    res.header("Location", redirectUrl);
+                    res.send('redirect to ' + redirectUrl);
+                    return;
+                }
 
                 content = content_split.join("\n");
 
