@@ -28,6 +28,20 @@ app.get('/*', function(req, res){
         content += data.toString();
     });
 
+    phantom.stderr.on('data', function(data){
+        console.error('stderr:' + url + data.toString());
+    });
+
+    phantom.stdout.on('error', function () {
+        console.error('stdout_error:' + url);
+    });
+
+    phantom.on('uncaughtException', function(err) {
+        console.error((err && err.stack) ? err.stack : err);
+        res.statusCode = 503;
+        res.send('Error');
+    });
+
     // 监听子进程退出事件
     phantom.on('exit', function(code){
         switch (code){
@@ -44,6 +58,13 @@ app.get('/*', function(req, res){
             default:
 
                 var content_split = content.split("\n");
+
+                if (content_split[1] === undefined) {
+                    console.error('执行异常，没有获取到状态码: '+ url);
+                    res.statusCode = 503;
+                    res.send(content);
+                    return;
+                }
 
                 var status = content_split[0];
                 var contentType = content_split[1];
@@ -63,10 +84,9 @@ app.get('/*', function(req, res){
 
 });
 
-app.listen(9500);
-app.listen(9501);
-app.listen(9502);
-app.listen(9503);
-app.listen(9504);
+port = process.env.PORT || 3000;
 
+app.listen(port, function () {
+    console.log('server-render-javascript app start listening on port ' + port + '!');
+});
 

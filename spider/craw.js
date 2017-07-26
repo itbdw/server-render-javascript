@@ -2,11 +2,11 @@
 "use strict";
 
 // 单个资源等待时间，避免资源加载后还需要加载其他资源
-var resourceWait = 500;
+var resourceWait = 1000;
 var resourceWaitTimer;
 
 // 最大等待时间
-var maxWait = 100;
+var maxWait = 500;
 var maxWaitTimer;
 
 // 资源计数
@@ -42,16 +42,15 @@ page.settings.userAgent = ua + ' ' + 'ServerRenderJavascript';
 page.settings.resourceTimeout = 5000;
 
 page.customHeaders = {
-  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 };
 
 page.onInitialized = function() {
-  page.customHeaders = {};
+    page.customHeaders = {};
 };
 
 // 获取镜像
 var capture = function (errCode) {
-
     // 外部通过stdout获取页面内容
     // 默认只用原文，因为 phantomjs 会默认给内容加 <html><head> 等标签
     var content = page.plainText;
@@ -136,4 +135,3 @@ page.open(url, function (status) {
         }, maxWait);
     }
 });
-

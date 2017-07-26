@@ -49,7 +49,7 @@ Any thing within craw.js and spider.js can be modified for your actual need.
 cd /var/server/spider
 npm install
 
-pm2 start spider.js
+PORT=3000 pm2 -f start spider.js
 ```
 
 after started, you can use `pm2 logs` to monitor logs, `pm2 list` to display services and much more.
@@ -61,11 +61,7 @@ I suppose you use nginx as web server and run the nodejs and nginx at same serve
 
 ```
 upstream spider {
-    server localhost:9500;
-    server localhost:9501;
-    server localhost:9502;
-    server localhost:9503;
-    server localhost:9504;
+    server localhost:3000;
 }
 
 server {
