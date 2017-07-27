@@ -51,6 +51,11 @@ app.get('/*', function(req, res){
                 res.statusCode = 504;
                 res.send(content);
                 break;
+            case 3:
+                console.log('禁止访问: '+ url);
+                res.statusCode = 403;
+                res.send(content);
+                break;
             default:
 
                 var content_split = content.split("\n");

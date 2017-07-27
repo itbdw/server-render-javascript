@@ -1,17 +1,18 @@
 /*global phantom*/
 "use strict";
 
-
 //相当于 -vvv 模式
 var debugMode = false;
 
 //单个请求的最长时间 ms
 var singleRequestTimeout = 5000;
 
-//每隔 N 毫秒检查 dom 是否加载完毕
-var domReadyCheckTime = 10;
+// 每隔 N 毫秒检查 dom 是否加载完毕
+// 其实基本上都加载完毕了，因为本来就是 phantomjs 的 onLoadFinished 的回调
+// 这个值基本等同于页面执行的时间，为了等待 js 执行
+var domReadyCheckTime = 200;
 
-//ua前缀
+//默认ua
 var ua = '';
 
 //浏览器宽高
@@ -33,7 +34,7 @@ console.error = function () {
 };
 
 phantom.onError = function (msg, trace) {
-    var msgStack = ['PHANTOM ERROR: ' + msg];
+    var msgStack = ['PHANTOM ERROR: ' + msg  + ' ' + getTimeStamp()];
     if (trace && trace.length) {
         msgStack.push('TRACE:');
         trace.forEach(function (t) {
@@ -54,7 +55,7 @@ var system = require('system');
 // 资源请求并计数
 page.onResourceRequested = function (req, net) {
     if (debugMode) {
-        console.error('req '+req.id + ' ' + req.url + ' ' + req.method);
+        console.error('req '+req.id + ' ' + req.url + ' ' + req.method + ' ' + getTimeStamp());
     }
 };
 
@@ -66,7 +67,7 @@ page.onResourceReceived = function (res) {
     }
 
     if (debugMode) {
-        console.error('res ' +res.id + ' ' + res.url + ' ' + res.status  + ' ' + res.redirectURL);
+        console.error('res ' +res.id + ' ' + res.url + ' ' + res.status  + ' ' + res.redirectURL + ' ' + getTimeStamp());
     }
 
     // 第一次请求 
@@ -84,7 +85,7 @@ page.onResourceReceived = function (res) {
 // catch error，防止错误直接暴露到页面
 page.onError = function (msg, trace) {
 
-    var msgStack = ['ERROR: ' + msg];
+    var msgStack = ['ERROR: ' + msg  + ' ' + getTimeStamp()];
 
     if (trace && trace.length) {
         msgStack.push('TRACE:');
@@ -97,17 +98,29 @@ page.onError = function (msg, trace) {
 };
 
 page.onConsoleMessage = function(msg, lineNum, sourceId) {
-   console.error('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
+   console.error('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")' + ' ' + getTimeStamp());
 };
 
 // 资源加载超时
 page.onResourceTimeout = function (request) {
-    console.error('Response (#' + request.id + '): ' + request.url + ' timeout ' + JSON.stringify(request));
+    console.error('Response (#' + request.id + '): ' + request.url + ' timeout ' + JSON.stringify(request) + ' ' + getTimeStamp());
 };
 
 // 资源加载失败
 page.onResourceError = function (resourceError) {
-    console.error('Unable to load resource (#' + resourceError.id + 'URL: ' + resourceError.url + ' )' + ' Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString);
+    console.error('Unable to load resource (#' + resourceError.id + 'URL: ' + resourceError.url + ' )' + ' Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString + ' ' + getTimeStamp());
+};
+
+page.onLoadFinished = function(status) {
+    if (debugMode) {
+        console.error('onLoadFinished: ' + status + ' ' + url  + ' ' + getTimeStamp());
+    }
+};
+
+page.onLoadStarted = function() {
+    if (debugMode) {
+        console.error('onLoadStarted: ' + url + ' ' + getTimeStamp());
+    }
 };
 
 var requestRedirectUrl = '';
@@ -156,8 +169,8 @@ var capture = function (errCode) {
 
     //没有获取到内容时，记录错误，并返回错误
     if (content === '') {
-        errCode = 1;
-        console.error("Unsupported Type: " + requestHeaderContentType);
+        errCode = 3;
+        console.error("Unsupported Type: " + requestHeaderContentType  + ' ' + url + ' ' + getTimeStamp());
     }
 
     content = requestHeaderStatus + "\n" + requestHeaderContentType + "\n" + requestRedirectUrl + "\n" + content;
@@ -170,22 +183,22 @@ var capture = function (errCode) {
 
 // 每 N 毫秒检查一次是否加载完毕
 function checkReadyState() {
-    var readyState = page.evaluate(function () {
-        return document.readyState;
-    });
 
-    if (debugMode) {
-        console.error(readyState);
-    }
+    setTimeout(function () {
+        var readyState = page.evaluate(function () {
+            return document.readyState;
+        });
 
-    if ("complete" === readyState) {
-        capture(0);
+        if (debugMode) {
+            console.error('readyState: ' + readyState + ' ' + url + ' ' + getTimeStamp());
+        }
 
-    } else {
-        setTimeout(function () {
+        if ("complete" === readyState) {
+            capture(0);
+        } else {
             checkReadyState();
-        },domReadyCheckTime);
-    }
+        }
+    }, domReadyCheckTime);
 }
 
 // 打开页面，回调表示加载完毕 html 时
@@ -193,6 +206,13 @@ page.open(url, function (status) {
     if (status !== 'success') {
         phantom.exit(1);
     } else {
+        if (debugMode) {
+            console.error('onLoadFinished in open Callback: ' + url + ' ' + status + ' ' + getTimeStamp());
+        }
         checkReadyState();
     }
 });
+
+function getTimeStamp() {
+    return  new Date().getTime();
+}
