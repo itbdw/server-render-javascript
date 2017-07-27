@@ -2,7 +2,7 @@
 "use strict";
 
 //单个请求的最长时间 ms
-var singleRequestTimeout = 2000;
+var singleRequestTimeout = 5000;
 
 // 加载完毕后的最大等待时间,即 js 执行时间 ms
 var waitExecuteTime = 200;
@@ -88,6 +88,10 @@ page.onError = function (msg, trace) {
     }
 
     console.error(msgStack.join('\n'));
+};
+
+page.onConsoleMessage = function(msg, lineNum, sourceId) {
+   console.error('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
 };
 
 // 资源加载超时
