@@ -2,7 +2,7 @@
 "use strict";
 
 //单个请求的最长时间 ms
-var singleRequestTimeout = 1000;
+var singleRequestTimeout = 2000;
 
 // 加载完毕后的最大等待时间,即 js 执行时间 ms
 var waitExecuteTime = 200;
@@ -52,10 +52,15 @@ page.onResourceRequested = function (req, net) {
 
 // 资源加载完毕
 page.onResourceReceived = function (res) {
+    // chunk模式的HTTP回包，会多次触发resourceReceived事件，需要判断资源是否已经end
+    if (res.stage !== 'end') {
+        return;
+    }
+
     // console.error('res ' +res.id + ' ' + res.url + ' ' + res.status  + ' ' + res.redirectURL);
 
     // 第一次请求 
-    if (url == res.url) {
+    if (res.id === 1) {
         // console.error('real res ' +res.id + ' ' + res.url + ' ' + res.status  + ' ' + res.redirectURL);
         requestHeaderContentType = res.contentType;
         requestHeaderStatus = res.status;
