@@ -150,7 +150,7 @@ page.customHeaders = customHeaders;
 // 页面 load 完毕，开始处理数据
 var capture = function (errCode) {
 
-    var content = page.textContent;
+    var content = page.plainText;
 
     //对 html ，需要保留标签
     if (requestHeaderContentType.indexOf("html") > -1) {
