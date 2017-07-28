@@ -150,11 +150,14 @@ page.customHeaders = customHeaders;
 // 页面 load 完毕，开始处理数据
 var capture = function (errCode) {
 
+    //纯文本数据
     var content = page.plainText;
 
-    //对 html ，需要保留标签
+    //对 html ，需要保留标签，并且读取渲染之后的数据
     if (requestHeaderContentType.indexOf("html") > -1) {
-        content = page.content;
+        content = page.evaluate(function() {
+            return document.documentElement.outerHTML;
+        });
     }
 
     //对 xml ，需要保留标签
@@ -204,7 +207,13 @@ page.open(url, function (status) {
         if (debugMode) {
             console.error('onLoadFinished in open Callback: ' + url + ' ' + status + ' ' + getTimeStamp());
         }
-        checkReadyState();
+
+        //只有 html 页面才需要等待渲染
+        if (requestHeaderContentType.indexOf("html") > -1) {
+            checkReadyState();
+        } else {
+            capture(0);
+        }
     }
 });
 
