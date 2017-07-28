@@ -150,22 +150,17 @@ page.customHeaders = customHeaders;
 // 页面 load 完毕，开始处理数据
 var capture = function (errCode) {
 
-    //todo 不支持除了文本类型以外的所有类型，理论上这些类型不应该被转发过来
-    var content = page.evaluate(function (requestHeaderContentType) {
-        //对 html ，需要保留标签
-        if (requestHeaderContentType.indexOf("html") > -1) {
-            return document.documentElement.outerHTML;
-        }
+    var content = page.textContent;
 
-        //对 xml ，需要保留标签
-        if (requestHeaderContentType.indexOf("xml") > -1) {
-            return document.documentElement.outerHTML;
-        }
+    //对 html ，需要保留标签
+    if (requestHeaderContentType.indexOf("html") > -1) {
+        content = page.content;
+    }
 
-        //默认 text
-        return document.documentElement.outerText;
-
-    }, requestHeaderContentType);
+    //对 xml ，需要保留标签
+    if (requestHeaderContentType.indexOf("xml") > -1) {
+        content = page.content;
+    }
 
     //没有获取到内容时，记录错误，并返回错误
     if (content === '') {
