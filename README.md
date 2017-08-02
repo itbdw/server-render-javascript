@@ -69,6 +69,7 @@ server {
     
     
     set $is_spider 0;
+    set $is_server_render 0;
 
     if ($http_user_agent ~ Baiduspider) {
        set $is_spider 1;
@@ -78,6 +79,12 @@ server {
        set $is_spider 1;
     }
 
+    if ($http_user_agent ~ ServerRender) {
+       set $is_server_render 1;
+    }
+
+    set $is_spider_is_render $is_spider$is_server_render;
+
     location / {
         ...        
     
@@ -86,7 +93,7 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        if ($is_spider = 1) {
+        if ($is_spider_is_render = 10) {
              proxy_pass http://spider;
         }
 

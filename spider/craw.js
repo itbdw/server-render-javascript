@@ -138,9 +138,6 @@ if (system.args[2]) {
 // 设置PhantomJS视窗大小
 page.viewportSize = viewSize;
 
-ua = ua.replace(/bot/g, '-b-o-t');
-ua = ua.replace(/pider/g, '-p-i-d-e-r');
-
 //timeout
 page.settings.userAgent = ua + ' ' + 'ServerRenderJavascript';
 page.settings.resourceTimeout = singleRequestTimeout;
