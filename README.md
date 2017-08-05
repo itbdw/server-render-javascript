@@ -1,5 +1,5 @@
 # server-render-javascript
-Let search engine craw your javascript website happily and correctly.🤡
+Prerender your javascript web page for better seo with PhantomJS.
 
 ## Dependency
 
