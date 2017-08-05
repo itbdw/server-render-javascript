@@ -20,10 +20,10 @@ Suggested
 1. NodeJS
 
 ```
-apt install npm
-npm install -g pm2
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 
-ln -s /usr/bin/nodejs /usr/bin/node
+sudo apt-get install -y nodejs
+
 ```
 
 2. PhantomJS
@@ -133,7 +133,10 @@ The workflow looks like this
 GoogleBot => Web Server => NodeJS Server => Make A Request Again With Server Browser => Get Web Content And Return
 ```
 
-In fact, Chrome also support headless browse after version 59. But compared with PhantomJS for now, PhantomJS is better and easy to use.
+In fact, Chrome also support headless browse after version 59. But compared with PhantomJS for now, ~~PhantomJS is better and easy to use.~~ you can find a chrome version at [https://github.com/itbdw/server-render-javascript-chrome](https://github.com/itbdw/server-render-javascript-chrome)
+
+
+
 
 ## Thanks
 
