@@ -8,6 +8,35 @@ app.enable('trust proxy');
 // 引入NodeJS的子进程模块
 var child_process = require('child_process');
 
+/**
+ *
+ * @param inputTime
+ * @returns {string}
+ */
+function formatDateTime(inputTime) {
+    if (inputTime) {
+        var date = new Date(inputTime);
+    } else {
+        var date = new Date();
+    }
+
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    h = h < 10 ? ('0' + h) : h;
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    var ms = date.getMilliseconds();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    second = second < 10 ? ('0' + second) : second;
+
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second + '.' + ms;
+};
+
+
 app.get('/*', function(req, res){
 
     // 完整URL
@@ -29,11 +58,11 @@ app.get('/*', function(req, res){
     });
 
     phantom.stderr.on('data', function(data){
-        console.error('stderr: ' + url + "\n" + data.toString());
+        console.error(formatDateTime() + ' ' + 'stderr: ' + url + "\n" + data.toString());
     });
 
     phantom.on('uncaughtException', function(err) {
-        console.error((err && err.stack) ? err.stack : err);
+        console.error(formatDateTime() + ' ', (err && err.stack) ? err.stack : err);
         res.statusCode = 503;
         res.send('Error');
     });
@@ -42,17 +71,17 @@ app.get('/*', function(req, res){
     phantom.on('exit', function(code){
         switch (code){
             case 1:
-                console.log('加载失败: '+url);
+                console.log(formatDateTime() + ' ' + '加载失败: '+url);
                 res.statusCode = 502;
                 res.send('加载失败');
                 break;
             case 2:
-                console.log('加载超时: '+ url);
+                console.log(formatDateTime() + ' ' + '加载超时: '+ url);
                 res.statusCode = 504;
                 res.send(content);
                 break;
             case 3:
-                console.log('禁止访问: '+ url);
+                console.log(formatDateTime() + ' ' + '禁止访问: '+ url);
                 res.statusCode = 403;
                 res.send(content);
                 break;
@@ -61,7 +90,7 @@ app.get('/*', function(req, res){
                 var content_split = content.split("\n");
 
                 if (content_split[1] === undefined) {
-                    console.error('执行异常，没有获取到状态码: '+ url);
+                    console.error(formatDateTime() + ' ' + '执行异常，没有获取到状态码: '+ url);
                     res.statusCode = 503;
                     res.send(content);
                     return;
@@ -96,6 +125,7 @@ app.get('/*', function(req, res){
 port = process.env.PORT || 3000;
 
 app.listen(port, function () {
-    console.log('server-render-javascript app start listening on port ' + port + '!');
+    console.log(formatDateTime() + ' ' + 'server-render-javascript app start listening on port ' + port + '!');
+    console.log(formatDateTime() + ' ' + 'server-render-javascript app start listening on port ' + port + '!');
 });
 

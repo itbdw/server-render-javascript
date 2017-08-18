@@ -34,7 +34,7 @@ console.error = function () {
 };
 
 phantom.onError = function (msg, trace) {
-    var msgStack = ['PHANTOM ERROR: ' + msg  + ' ' + getTimeStamp()];
+    var msgStack = ['PHANTOM ERROR: ' + msg ];
     if (trace && trace.length) {
         msgStack.push('TRACE:');
         trace.forEach(function (t) {
@@ -55,7 +55,7 @@ var system = require('system');
 // 资源请求并计数
 page.onResourceRequested = function (req, net) {
     if (debugMode) {
-        console.error('req '+req.id + ' ' + req.url + ' ' + req.method + ' ' + getTimeStamp());
+        console.error('req '+req.id + ' ' + req.url + ' ' + req.method);
     }
 };
 
@@ -67,7 +67,7 @@ page.onResourceReceived = function (res) {
     }
 
     if (debugMode) {
-        console.error('res ' +res.id + ' ' + res.url + ' ' + res.status  + ' ' + res.redirectURL + ' ' + getTimeStamp());
+        console.error('res ' +res.id + ' ' + res.url + ' ' + res.status  + ' ' + res.redirectURL);
     }
 
     // 第一次请求 
@@ -85,7 +85,7 @@ page.onResourceReceived = function (res) {
 // catch error，防止错误直接暴露到页面
 page.onError = function (msg, trace) {
 
-    var msgStack = ['ERROR: ' + msg  + ' ' + getTimeStamp()];
+    var msgStack = ['ERROR: ' + msg ];
 
     if (trace && trace.length) {
         msgStack.push('TRACE:');
@@ -98,28 +98,28 @@ page.onError = function (msg, trace) {
 };
 
 page.onConsoleMessage = function(msg, lineNum, sourceId) {
-   console.error('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")' + ' ' + getTimeStamp());
+   console.error('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
 };
 
 // 资源加载超时
 page.onResourceTimeout = function (request) {
-    console.error('Response (#' + request.id + '): ' + request.url + ' timeout ' + JSON.stringify(request) + ' ' + getTimeStamp());
+    console.error('Response (#' + request.id + '): ' + request.url + ' timeout ' + JSON.stringify(request));
 };
 
 // 资源加载失败
 page.onResourceError = function (resourceError) {
-    console.error('Unable to load resource (#' + resourceError.id + 'URL: ' + resourceError.url + ' )' + ' Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString + ' ' + getTimeStamp());
+    console.error('Unable to load resource (#' + resourceError.id + 'URL: ' + resourceError.url + ' )' + ' Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString);
 };
 
 page.onLoadFinished = function(status) {
     if (debugMode) {
-        console.error('onLoadFinished: ' + status + ' ' + url  + ' ' + getTimeStamp());
+        console.error('onLoadFinished: ' + status + ' ' + url );
     }
 };
 
 page.onLoadStarted = function() {
     if (debugMode) {
-        console.error('onLoadStarted: ' + url + ' ' + getTimeStamp());
+        console.error('onLoadStarted: ' + url);
     }
 };
 
@@ -165,7 +165,7 @@ var capture = function (errCode) {
     //没有获取到内容时，记录错误，并返回错误
     if (content === '') {
         errCode = 3;
-        console.error("Unsupported Type: " + requestHeaderContentType  + ' ' + url + ' ' + getTimeStamp());
+        console.error("Unsupported Type: " + requestHeaderContentType  + ' ' + url);
     }
 
     content = requestHeaderStatus + "\n" + requestHeaderContentType + "\n" + requestRedirectUrl + "\n" + content;
@@ -185,7 +185,7 @@ function checkReadyState() {
         });
 
         if (debugMode) {
-            console.error('readyState: ' + readyState + ' ' + url + ' ' + getTimeStamp());
+            console.error('readyState: ' + readyState + ' ' + url);
         }
 
         if ("complete" === readyState) {
@@ -202,7 +202,7 @@ page.open(url, function (status) {
         phantom.exit(1);
     } else {
         if (debugMode) {
-            console.error('onLoadFinished in open Callback: ' + url + ' ' + status + ' ' + getTimeStamp());
+            console.error('onLoadFinished in open Callback: ' + url + ' ' + status);
         }
 
         //只有 html 页面才需要等待渲染
@@ -213,7 +213,3 @@ page.open(url, function (status) {
         }
     }
 });
-
-function getTimeStamp() {
-    return  new Date().getTime();
-}
