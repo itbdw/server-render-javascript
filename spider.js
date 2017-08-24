@@ -126,6 +126,5 @@ port = process.env.PORT || 3000;
 
 app.listen(port, function () {
     console.log(formatDateTime() + ' ' + 'server-render-javascript app start listening on port ' + port + '!');
-    console.log(formatDateTime() + ' ' + 'server-render-javascript app start listening on port ' + port + '!');
 });
 
