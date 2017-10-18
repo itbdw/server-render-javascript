@@ -153,7 +153,7 @@ var capture = function (errCode) {
     //对 html ，需要保留标签，并且读取渲染之后的数据
     if (requestHeaderContentType.indexOf("html") > -1) {
         content = page.evaluate(function() {
-            return document.documentElement.outerHTML;
+            return "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
         });
     }
 
