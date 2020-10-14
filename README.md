@@ -1,3 +1,23 @@
+
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+
+# WARNING
+This is a thing waste of your time!
+
+# 警告
+纯属浪费时间，不要尝试。
+
+
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+
+
+
 # server-render-javascript
 Prerender your javascript web page for better seo with PhantomJS.
 
